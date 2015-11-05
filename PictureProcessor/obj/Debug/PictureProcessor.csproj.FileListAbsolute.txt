@@ -1,0 +1,13 @@
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\bin\Debug\PictureProcessor.exe.config
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\bin\Debug\PictureProcessor.exe
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\bin\Debug\PictureProcessor.pdb
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\obj\Debug\MainWindow.baml
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\obj\Debug\MainWindow.g.cs
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\obj\Debug\App.g.cs
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\obj\Debug\PictureProcessor_MarkupCompile.cache
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\obj\Debug\PictureProcessor.g.resources
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\obj\Debug\PictureProcessor.Properties.Resources.resources
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\obj\Debug\PictureProcessor.csproj.GenerateResource.Cache
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\obj\Debug\PictureProcessor.exe
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\obj\Debug\PictureProcessor.pdb
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\obj\Debug\PictureProcessor.csprojResolveAssemblyReference.cache

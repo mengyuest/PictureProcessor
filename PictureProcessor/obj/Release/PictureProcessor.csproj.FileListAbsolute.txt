@@ -1,0 +1,12 @@
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\bin\Release\PictureProcessor.exe.config
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\bin\Release\PictureProcessor.exe
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\bin\Release\PictureProcessor.pdb
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\obj\Release\MainWindow.baml
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\obj\Release\MainWindow.g.cs
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\obj\Release\App.g.cs
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\obj\Release\PictureProcessor_MarkupCompile.cache
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\obj\Release\PictureProcessor.g.resources
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\obj\Release\PictureProcessor.Properties.Resources.resources
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\obj\Release\PictureProcessor.csproj.GenerateResource.Cache
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\obj\Release\PictureProcessor.exe
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\obj\Release\PictureProcessor.pdb

@@ -1,0 +1,56 @@
+﻿<Window x:Class="PictureProcessor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="图像处理软件" Height="700" Width="1000">
+    <Grid ShowGridLines="True">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="300"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0" ShowGridLines="True">
+            <ScrollViewer Name="EditedScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
+                <Canvas Name="EditedCanvas" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            </ScrollViewer>
+        </Grid>
+        <Grid Grid.Column="1" ShowGridLines="True">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="300"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" ShowGridLines="True">
+                <ScrollViewer Name="OriginScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <Canvas Name="OriginCanvas" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                </ScrollViewer>
+            </Grid>
+            <Grid Grid.Row="1" ShowGridLines="True" >
+
+                <RadioButton GroupName="Method" x:Name="MethodARadioButton" Content="最邻近" HorizontalAlignment="Left" Margin="41,63,0,0" VerticalAlignment="Top" Checked="MethodARadioButton_Checked" RenderTransformOrigin="0.579,-0.875" />
+                <RadioButton GroupName="Method" x:Name="MethodBRadioButton" Content="双线性" HorizontalAlignment="Left" Margin="123,63,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.509,-0.75" Checked="MethodBRadioButton_Checked"/>
+                <RadioButton GroupName="Method" x:Name="MethodCRadioButton" Content="双三次" HorizontalAlignment="Left" Margin="207,63,0,0" VerticalAlignment="Top" Checked="MethodCRadioButton_Checked" ToolTip="计算时间长，不建议使用滑块调节"/>
+                <Button x:Name="ImportButton" Content="导入" HorizontalAlignment="Left" Margin="41,10,0,0" VerticalAlignment="Top" Width="75" Click="ImportButton_OnClick"/>
+                <Button x:Name="ExportButton" Content="导出" HorizontalAlignment="Left" Margin="189,10,0,0" VerticalAlignment="Top" Width="75" Click="ExportButton_OnClick"/>
+                <Label Content="Θ旋转" HorizontalAlignment="Left" Margin="34,145,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.988,0.671"/>
+                <TextBox x:Name="ThetaTextBox" HorizontalAlignment="Left" Height="23" Margin="207,145,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="57" TextChanged="ThetaTextBox_TextChanged"/>
+                <Slider x:Name="ThetaSlider" HorizontalAlignment="Left" Margin="81,145,0,0" Width="94" Minimum="0" Maximum="10" Value="0" TickFrequency="0.2" IsSnapToTickEnabled ="True" VerticalAlignment="Top" />
+                <Label Content="X缩放" HorizontalAlignment="Left" Margin="34,185,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.988,0.671"/>
+                <TextBox x:Name="XTextBox" HorizontalAlignment="Left" Height="23" Margin="207,189,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="57" TextChanged="XTextBox_TextChanged"/>
+                <Slider x:Name="XSlider" HorizontalAlignment="Left" Margin="75,189,0,0" Width="100" Minimum="0.01" Maximum="10" Value="1" VerticalAlignment="Top" />
+                <Label Content="Y缩放" HorizontalAlignment="Left" Margin="34,232,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.988,0.671"/>
+                <TextBox x:Name="YTextBox" HorizontalAlignment="Left" Height="23" Margin="207,235,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="57" TextChanged="YTextBox_TextChanged"/>
+                <Slider x:Name="YSlider" HorizontalAlignment="Left" Margin="75,233,0,0" Width="100" Minimum="0.01" Maximum="10" Value="1" VerticalAlignment="Top" />
+                <Label x:Name="ThetaLabel" Content="{Binding Value, ElementName=ThetaSlider}" HorizontalAlignment="Left" Margin="109,128,0,0" VerticalAlignment="Top"/>
+                <Label x:Name="XLabel" Content="{Binding Value, ElementName=XSlider}" HorizontalAlignment="Left" Margin="109,172,0,0" VerticalAlignment="Top"/>
+                <Label x:Name="YLabel" Content="{Binding Value, ElementName=YSlider}" HorizontalAlignment="Left" Margin="109,216,0,0" VerticalAlignment="Top"/>
+                <CheckBox x:Name="AdjustModeCheckBox" Content="滑块调节" HorizontalAlignment="Left" Margin="41,280,0,0" VerticalAlignment="Top" Click="AdjustModeCheckBox_Click"/>
+                <CheckBox x:Name="FirstRotateCheckBox" Content="先转后放缩" HorizontalAlignment="Left" Margin="41,323,0,0" VerticalAlignment="Top" Click="FirstRotateCheckBox_OnClick"/>
+                <CheckBox x:Name="PhotoCenterCheckBox" Content="图片居中" HorizontalAlignment="Left" Margin="41,302,0,0" VerticalAlignment="Top" Click="PhotoCenterCheckBox_OnClick"/>
+                <RadioButton GroupName="Rotate" x:Name="CropButton" Content="Crop" HorizontalAlignment="Left" Margin="123,104,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.417,0.5"/>
+                <RadioButton GroupName="Rotate" x:Name="LooseButton" Content="Loose" HorizontalAlignment="Left" Margin="41,104,0,0" VerticalAlignment="Top"/>
+                <Button x:Name="RunButton" Content="变换" HorizontalAlignment="Left" Margin="147,280,0,0" VerticalAlignment="Top" Width="117" Click="RunButton_OnClick" Height="59"/>
+                <Label Content="耗时：" HorizontalAlignment="Left" Margin="38,336,0,0" VerticalAlignment="Top"/>
+                <Label Name="TimeCountLabel" Content="" HorizontalAlignment="Left" Margin="84,335,0,0" VerticalAlignment="Top"/>
+
+            </Grid>
+        </Grid >
+    </Grid>
+</Window>
