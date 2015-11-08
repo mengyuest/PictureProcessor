@@ -10,3 +10,4 @@ F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProc
 F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\obj\Release\PictureProcessor.csproj.GenerateResource.Cache
 F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\obj\Release\PictureProcessor.exe
 F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\obj\Release\PictureProcessor.pdb
+F:\Users\MENG\Documents\visual studio 2012\Projects\PictureProcessor\PictureProcessor\obj\Release\PictureProcessor.csprojResolveAssemblyReference.cache

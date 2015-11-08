@@ -27,11 +27,17 @@ namespace PictureProcessor
 	{
 		#region 变量区
 
-		public static Image OriginImage = new Image();
+		//public static Image OriginImage = new Image();
 
 		public static Image EditedImage = new Image();
 
-		public static BitmapSource OriginBitmapSource;
+		//public static BitmapSource OriginBitmapSource;
+
+		public String OriginPath = null;
+
+		public static int OriginX;
+
+		public static int OriginY;
 
 		public static BitmapSource EditedBitmapSource;
 
@@ -119,9 +125,9 @@ namespace PictureProcessor
 
 		private void Initialize()
 		{
-			OriginCanvas.Children.Add(OriginImage);
+			
 			EditedCanvas.Children.Add(EditedImage);
-			OriginImage.Stretch = Stretch.Fill;
+			
 			EditedImage.Stretch = Stretch.Fill;
 		}
 
@@ -132,19 +138,10 @@ namespace PictureProcessor
 			ofd.Filter = "jpg file|*.jpg";
 			if (ofd.ShowDialog() == true)
 			{
-				//TODO 释放内存 
-				if (OriginBitmapSource != null)
-				{
-
-				}
-
-				if (EditedBitmapSource != null)
-				{
-
-				}
-
-
+			    OriginPath = ofd.FileName;
+				BitmapSource OriginBitmapSource = new BitmapImage(new Uri(OriginPath, UriKind.Absolute));
 				OriginBitmapSource = new BitmapImage(new Uri(ofd.FileName, UriKind.Absolute));
+				Image OriginImage = new Image();
 				OriginImage.Source = OriginBitmapSource;
 				OriginCanvas.Width = OriginBitmapSource.PixelWidth;
 				OriginCanvas.Height = OriginBitmapSource.PixelHeight;
@@ -158,8 +155,11 @@ namespace PictureProcessor
 				EditedData = new byte[cut.Height * stride];
 
 				OriginRGBMatrix = new byte[(cut.Height+3)*(cut.Width+3)*3];
-				GenerateMarginMatrix();
-
+				GenerateMarginMatrix(OriginBitmapSource.PixelWidth,OriginBitmapSource.PixelHeight);
+				OriginCanvas.Children.Clear();
+				OriginCanvas.Children.Add(OriginImage);
+				OriginImage.Stretch = Stretch.Fill;
+				
 
 				for (var i = 0; i < OriginData.Count(); i++)
 				{
@@ -179,10 +179,10 @@ namespace PictureProcessor
 
 		}
 
-		private void GenerateMarginMatrix()
+		private void GenerateMarginMatrix(int x, int y)
 		{
-			int x = OriginBitmapSource.PixelWidth;
-			int y = OriginBitmapSource.PixelHeight;
+			Margin[0].X = x;
+			Margin[0].Y = y;
 			for (var i = 0; i < y+3; i++)
 			{
 				for (var j = 0; j < x+3; j++)
@@ -347,7 +347,12 @@ namespace PictureProcessor
 			sfd.Filter = "jpeg file|*.jpg";
 			if (sfd.ShowDialog() == true)
 			{
-				using (FileStream JPGStream = new FileStream(sfd.FileName, FileMode.Create))
+			    if (sfd.FileName == OriginPath)
+			    {
+			        MessageBox.Show("您的保存路径与打开文件路径冲突，请更换路径！");
+			        return;
+			    }
+			    using (FileStream JPGStream = new FileStream(sfd.FileName, FileMode.Create))
 				{
 					BitmapEncoder encoder = new JpegBitmapEncoder();
 					encoder.Frames.Add(BitmapFrame.Create(EditedBitmapSource));
@@ -359,8 +364,7 @@ namespace PictureProcessor
 		private void ConfirmLengthAndCenterPoint(bool isCentered = false)
 		{
 			
-			Margin[0].X = OriginBitmapSource.PixelWidth;
-			Margin[0].Y = OriginBitmapSource.PixelHeight;
+
 			if (CropButton.IsChecked == true)
 			{
 				if (isCentered == false)
@@ -439,50 +443,6 @@ namespace PictureProcessor
 		private void AssignMemoryForEditedData()
 		{
 			EditedData = new byte[(int)Margin[2].X * (int)Margin[2].Y * 4];
-		}
-
-		/// <summary>
-		/// 最近邻插值
-		/// </summary>
-		private void TransformMethodA()
-		{
-			var AX = PhotoStates.X;
-			var AY = PhotoStates.Y;
-			var theta = PhotoStates.Theta;
-
-			int center2X = (int) Margin[2].X;
-			int center2Y = (int) Margin[2].Y;
-
-
-
-			for (var j = 0; j < (int)Margin[2].X; j++)
-			{
-				for (var i = 0; i < (int) Margin[2].Y; i++)
-				{
-					float x0;
-					float y0;
-					MappingMethod(j,i,out  x0, out y0,PhotoStates.IsFirstRotate);
-					int NearestX0 = GetNearest(x0);
-					int NearestY0 = GetNearest(y0);
-					
-					var pos = (i * (int)Margin[2].X + j) * 4;
-					if (NearestX0 > 0 && NearestX0 < Margin[0].X - 1 && NearestY0 > 0 && NearestY0 < Margin[0].Y - 1)
-					{
-						var OriPos = (NearestY0*(int) Margin[0].X + NearestX0)*4;
-						for (var k = 0; k < 4; k++)
-						{
-							EditedData[pos + k] = OriginData[OriPos + k];
-						}
-					}
-					else
-					{
-						for (var k = 0; k < 4; k++)
-						{
-							EditedData[pos + k] = 0;
-						}
-					}
-				}
-			}
 		}
 
 		/// <summary>
@@ -585,94 +545,7 @@ namespace PictureProcessor
 		}
 
 		/// <summary>
-		/// 双线性插值
-		/// </summary>
-		private void TransformMethodB()
-		{
-			var AX = PhotoStates.X;
-			var AY = PhotoStates.Y;
-			var theta = PhotoStates.Theta;
-			for (var j = 0; j < (int)Margin[2].X; j++)
-			{
-				for (var i = 0; i < (int)Margin[2].Y; i++)
-				{
-					float x0;
-					float y0;
-					MappingMethod(j, i, out  x0, out y0, PhotoStates.IsFirstRotate);
-					int NearestX0 = (int)Math.Floor(x0);
-					int NearestY0 = (int)Math.Floor(y0);
-
-					var pos = (i * (int)Margin[2].X + j) * 4;
-					if (NearestX0 >= 0 && NearestX0 < (int)Margin[0].X - 1 && NearestY0 >= 0 && NearestY0 < (int)Margin[0].Y - 1)
-					{
-						var u = x0 - NearestX0;
-						var v = y0 - NearestY0;
-						var OriPos1 = (NearestY0 * (int)Margin[0].X + NearestX0) * 4;
-						var OriPos2 = ((NearestY0+1) * (int)(Margin[0].X) + NearestX0) * 4;
-						var OriPos3 = (NearestY0 * (int)Margin[0].X  + NearestX0+1) * 4;
-						var OriPos4 = ((NearestY0+1) * (int)(Margin[0].X) + NearestX0 + 1) * 4;
-						
-						for (var k = 0; k < 4; k++)
-						{
-							EditedData[pos + k] = (byte)((OriginData[OriPos1 + k] * (1 - u) * (1 - v)) + (OriginData[OriPos2 + k] * u * (1 - v)) + (OriginData[OriPos1 + k] * (1 - u) *v) + (OriginData[OriPos1 + k] * u*v));
-						}
-					}
-					else
-					{
-						if (((NearestX0 == -1 || NearestX0 == (int) Margin[0].X-1)&&(NearestY0>=0&&NearestY0<(int)Margin[0].Y-1)) ||
-							((NearestY0 == -1 || NearestY0 == (int) Margin[0].Y-1))&&(NearestX0>=0&&NearestX0<(int)Margin[0].X-1))
-						{
-							if (NearestX0 == -1)
-							{
-								NearestX0++;
-							}
-							if (NearestY0 == -1)
-							{
-								NearestY0++;
-							}
-
-							if (NearestX0 == (int) Margin[0].X-1)
-							{
-								NearestX0--;
-							}
-
-							if (NearestY0 == (int) Margin[0].Y-1)
-							{
-								NearestY0--;
-							}
-
-							var u = x0 - NearestX0;
-							var v = y0 - NearestY0;
-							var OriPos1 = (NearestY0*(int) Margin[0].X + NearestX0)*4;
-							var OriPos2 = ((NearestY0 + 1)*(int) (Margin[0].X) + NearestX0)*4;
-							var OriPos3 = (NearestY0*(int) Margin[0].X + NearestX0 + 1)*4;
-							var OriPos4 = ((NearestY0 + 1)*(int) (Margin[0].X) + NearestX0 + 1)*4;
-							for (var k = 0; k < 4; k++)
-							{
-								EditedData[pos + k] =
-									(byte)
-										((OriginData[OriPos1 + k]*(1 - u)*(1 - v)) + (OriginData[OriPos2 + k]*u*(1 - v)) +
-										 (OriginData[OriPos1 + k]*(1 - u)*v) + (OriginData[OriPos1 + k]*u*v));
-							}
-						}
-
-						else
-						{
-							for (var k = 0; k < 4; k++)
-							{
-								EditedData[pos + k] = 0;
-							}
-							
-						}
-
-					}
-				}
-			}
-
-		}
-
-		/// <summary>
-		/// 双线性插值
+		/// 双线性插值（并行计算）
 		/// </summary>
 		private void TransformMethodB(bool isMultiThread)
 		{
@@ -746,18 +619,6 @@ namespace PictureProcessor
 											  (OriginRGBMatrix[((NearestY0 + 1)*(margin0X + 3) + NearestX0 + 2)*3 + k]*(1 - u)*
 											   v) +
 											  (OriginRGBMatrix[((NearestY0 + 2)*(margin0X + 3) + NearestX0 + 2)*3 + k]*u*v));
-							//if (tempByte < 0)
-							//{
-							//    EditedData[pos + k] = 0;
-							//}
-							//else if(tempByte >255)
-							//{
-							//    EditedData[pos + k] = 255;
-							//}
-							//else
-							//{
-							//    EditedData[pos + k] = (byte)tempByte;
-							//}
 							EditedData[pos + k] = (byte) tempByte;
 						}
 						EditedData[pos + 3] = 0;
@@ -777,104 +638,8 @@ namespace PictureProcessor
 		}
 
 		/// <summary>
-		/// 双三次插值
-		/// TODO 矩阵乘法 && 边界处理
-		/// </summary>
-		private void TransformMethodC()
-		{
-			var AX = PhotoStates.X;
-			var AY = PhotoStates.Y;
-			var theta = PhotoStates.Theta;
-
-			int margin2X = (int)Margin[2].X;
-			int margin2Y = (int)Margin[2].Y;
-
-			int margin0X = (int) Margin[0].X;
-			int margin0Y = (int)Margin[0].Y;
-
-			float center2X = Center[2].X;
-			float center2Y = Center[2].Y;
-
-			float center0X = Center[0].X;
-			float center0Y = Center[0].Y;
-			bool isFirstRotate = PhotoStates.IsFirstRotate;
-
-			byte [,] MatrixA = new byte[4,4];
-			float [] VectorS = new float[8];
-
-			float tempByte = 0;
-			float mixR = 0;
-			float mixG = 0;
-			float mixB = 0;
-			float mixAlpha = 0;
-			
-			for (var j = 0; j < margin2X; j++)
-			{
-				for (var i = 0; i < margin2Y; i++)
-				{
-					float x0;
-					float y0;
-					MappingMethod(j, i, out  x0, out y0, PhotoStates.IsFirstRotate);
-					int NearestX0 = (int)Math.Floor(x0);
-					int NearestY0 = (int)Math.Floor(y0);
-
-					var pos = (i * margin2X + j) * 4;
-					if (NearestX0 >= 0 && NearestX0 < margin0X && NearestY0 >= 0 && NearestY0 < margin0Y)
-					{
-						var u = x0 - NearestX0;
-						var v = y0 - NearestY0; 
-						for (var enumI = 0; enumI < 4; enumI++)
-						{
-							VectorS[enumI] = FunctionS(u + 1 - enumI);
-							VectorS[4 + enumI] = FunctionS(v + 1 - enumI);
-						}
-
-						for (var k = 0; k < 3; k++)
-						{
-							EditedData[pos + k] = 0;
-							tempByte = 0;
-							for (var enumI = 0; enumI < 4; enumI++)
-							{
-								for (var enumJ = 0; enumJ < 4; enumJ++)
-								{
-									MatrixA[enumI, enumJ] = OriginRGBMatrix[((NearestY0 + enumI) * (margin0X + 3) + NearestX0 + enumJ) * 3 + k];
-									tempByte+= VectorS[4 + enumI] * VectorS[enumJ] * MatrixA[enumI, enumJ];
-									
-								}
-							}
-							if (tempByte < 0)
-							{
-								EditedData[pos + k] = 0;
-							}
-							else if (tempByte > 255)
-							{
-								EditedData[pos + k] = 255;
-							}
-							else
-							{
-								EditedData[pos + k] = (Byte)tempByte;
-							}
-							
-						}
-						
-						EditedData[pos + 3] = 0;
-
-					}
-					else
-					{
-						for (var k = 0; k < 4; k++)
-						{
-							EditedData[pos + k] = 0;
-						}
-					}
-				}
-			}
-
-		}
-
-		/// <summary>
-		/// 双三次插值
-		/// TODO 代码优化！ unsafe指针访问
+		/// 双三次插值（并行计算）
+		/// 代码优化！ unsafe指针访问
 		/// </summary>
 		private void TransformMethodC(bool isMultiThread)
 		{
@@ -912,13 +677,8 @@ namespace PictureProcessor
 			{
 				for(var i=0;i<margin2Y;i++)
 				{
-			//for (var j = 0; j < margin2X; j++)
-			//{
-			//	Parallel.For(0, margin2Y, i =>
-			//	{
 					float x0;
 					float y0;
-					//byte[,] MatrixA = new byte[4, 4];
 					float[] VectorS = new float[8];
 					float tempByte = 0;
 					float tempByteR = 0;
@@ -976,15 +736,9 @@ namespace PictureProcessor
 									//指针 插值近似方法
 									VectorS[enumI] = floatPtr[(int)((u + 1 - enumI + 2) * simuNum / 4)];
 									VectorS[4 + enumI] = floatPtr[(int)((v + 1 - enumI + 2) * simuNum / 4)];
-									
-									//var delS1 = FunctionS(u + 1 - enumI);
-									//var delS2 = FunctionS(v + 1 - enumI);
 								}
 							}
 						}
-					//for (var k = 0; k < 3; k++)
-						//{
-							tempByte = 0;
 							tempByteR = 0;
 							tempByteG = 0;
 							tempByteB = 0;
@@ -997,26 +751,11 @@ namespace PictureProcessor
 									for (var enumI = 0; enumI < 4; enumI++)
 									{
 										var NY0ENUMI_MARX_3_3 = NY0_M0X_3_3 + enumI*(margin0X + 3)*3;
-										//for (var enumJ = 0; enumJ < 4; enumJ++)
-										//{
-										//    var k = VectorS[4 + enumI] * VectorS[enumJ];
-										//    //var offset = ((NearestY0 + enumI)*(margin0X + 3) + NearestX0 + enumJ)*3;
-										//    var offset = NY0ENUMI_MARX_3_3 + NX3 + enumJ * 3;
-										//    tempByteR += k * bytePtr[offset];
-										//    tempByteG += k * bytePtr[offset + 1];
-										//    tempByteB += k * bytePtr[offset + 2];
-										//    //bytePtr++;
-										//}
-
-										//打开循环，加速计算(5X5快0.6s左右)
-										//for (var enumJ = 0; enumJ < 4; enumJ++)
-										//{
 										var k = VectorS[4 + enumI];
 										var kk0 = k * VectorS[0];
 										var kk1 = k * VectorS[1];
 										var kk2 = k * VectorS[2];
 										var kk3 = k * VectorS[3];
-										//var offset = ((NearestY0 + enumI)*(margin0X + 3) + NearestX0 + enumJ)*3;
 										var offset0 = NY0ENUMI_MARX_3_3 + NX3;
 										var offset1 = NY0ENUMI_MARX_3_3 + NX3 + 3;
 										var offset2 = NY0ENUMI_MARX_3_3 + NX3 + 6;
@@ -1024,9 +763,6 @@ namespace PictureProcessor
 										tempByteR += kk0 * bytePtr[offset0] + kk1 * bytePtr[offset1] + kk2 * bytePtr[offset2] + kk3 * bytePtr[offset3];
 										tempByteG += kk0 * bytePtr[offset0 + 1] + kk1 * bytePtr[offset1 + 1] + kk2 * bytePtr[offset2 + 1] + kk3 * bytePtr[offset3 + 1];
 										tempByteB += kk0 * bytePtr[offset0 + 2] + kk1 * bytePtr[offset1 + 2] + kk2 * bytePtr[offset2 + 2] + kk3 * bytePtr[offset3 + 2];
-										//bytePtr++;
-										//}
-
 									}
 								}
 							}
@@ -1087,54 +823,6 @@ namespace PictureProcessor
 
 		}
 
-		/// <summary>
-		/// TODO PhotoStates.X .Y .THETA 设为函数参数
-		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <param name="x0"></param>
-		/// <param name="y0"></param>
-		/// <param name="type"></param>
-		private void MappingMethod( int x, int y, out float x0, out float y0, bool type = false)
-		{
-			if (type == false)
-			{
-				x0 = (float) (Center[0].X +
-							  1/PhotoStates.X*
-							  (Math.Cos(PhotoStates.Theta)*(x - Center[2].X) +
-							   Math.Sin(PhotoStates.Theta)*(y - Center[2].Y)));
-				y0 = (float) (Center[0].Y +
-							  1/PhotoStates.Y*
-							  (Math.Cos(PhotoStates.Theta)*(y - Center[2].Y) -
-							   Math.Sin(PhotoStates.Theta)*(x - Center[2].X)));
-			}
-
-			else 
-			{
-				x0 = (float)(Center[0].X +
-							  1 / PhotoStates.X *
-							  (Math.Cos(PhotoStates.Theta) * (x - Center[2].X)) +
-							   1/PhotoStates.Y*(Math.Sin(PhotoStates.Theta) * (y - Center[2].Y)));
-				y0 = (float)(Center[0].Y +
-							  1 / PhotoStates.Y *
-							  (Math.Cos(PhotoStates.Theta) * (y - Center[2].Y)) -
-							   1/PhotoStates.X*(Math.Sin(PhotoStates.Theta) * (x - Center[2].X)));
-			}
-		}
-
-		private int GetNearest(float X)
-		{
-			if (X - Math.Floor(X) > 0.5)
-			{
-				return (int)Math.Ceiling(X);
-			}
-
-			else
-			{
-				return (int)Math.Floor(X);
-			}
-		}
-
 		private void GenerateEditedData()
 		{
 
@@ -1145,19 +833,6 @@ namespace PictureProcessor
 			EditedImage.Source = EditedBitmapSource;
 			EditedCanvas.Width = EditedBitmapSource.PixelWidth;
 			EditedCanvas.Height = EditedBitmapSource.PixelHeight;
-		}
-
-		private float FunctionS(float X)
-		{
-			if (Math.Abs(X) <= 1)
-			{
-				return (1-2*X*X +X*X*Math.Abs(X));
-			}
-			else if (Math.Abs(X) <= 2)
-			{
-				return (4 - 8 * Math.Abs(X) + 5 * X * X - X * X * Math.Abs(X));
-			}
-			return 0;
 		}
 
 
@@ -1173,22 +848,6 @@ namespace PictureProcessor
 			{
 				return false;
 			}
-		}
-
-		private void ThetaTextBox_TextChanged(object sender, TextChangedEventArgs e)
-		{
-			//float bufferValue = 0;
-			//if (IsNumberic(ThetaTextBox.Text, out bufferValue))
-			//{
-			//    PhotoStates.Theta = bufferValue;
-			//    ThetaSlider.Value = bufferValue % (2 * Math.PI);
-			//    TransformImplement();
-			//}
-
-			//else
-			//{
-			//    MessageBox.Show("呵呵哒，你给的数据有问题！请输入数字！");
-			//}
 		}
 
 		private void AdjustModeCheckBox_Click(object sender, RoutedEventArgs e)
@@ -1210,52 +869,6 @@ namespace PictureProcessor
 		private void MethodCRadioButton_Checked(object sender, RoutedEventArgs e)
 		{
 			PhotoStates.MethodIndex = 2;
-		}
-
-		private void XTextBox_TextChanged(object sender, TextChangedEventArgs e)
-		{
-			//float bufferValue = 0;
-			//if (IsNumberic(XTextBox.Text, out bufferValue))
-			//{
-			//    if (bufferValue > 5 || bufferValue < 0.1)
-			//    {
-			//       // MessageBox.Show("呵呵哒，你给的数据太苛刻了！");
-			//    }
-			//    else
-			//    {
-			//        PhotoStates.X = bufferValue;
-			//        XSlider.Value = bufferValue;
-			//        TransformImplement();
-			//    }
-			//}
-
-			//else
-			//{
-			//   // MessageBox.Show("呵呵哒，你给的数据有问题！请输入数字！");
-			//}
-		}
-
-		private void YTextBox_TextChanged(object sender, TextChangedEventArgs e)
-		{
-			//float bufferValue = 0;
-			//if (IsNumberic(YTextBox.Text, out bufferValue))
-			//{
-			//    if (bufferValue > 10 || bufferValue < 0.1)
-			//    {
-			//       // MessageBox.Show("呵呵哒，你给的数据太苛刻了！");
-			//    }
-			//    else
-			//    {
-			//        PhotoStates.Y = bufferValue;
-			//        YSlider.Value = bufferValue;
-			//        TransformImplement();
-			//    }
-			//}
-
-			//else
-			//{
-			//    MessageBox.Show("呵呵哒，你给的数据有问题！请输入数字！");
-			//}
 		}
 
 		private void ThetaSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -1353,10 +966,7 @@ namespace PictureProcessor
 				MessageBox.Show("呵呵哒，你给的数据有问题！请输入数字！");
 				return;
 			}
-
 			TransformImplement();
-
-
 		}
 	}
 }

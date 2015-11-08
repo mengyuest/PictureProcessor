@@ -30,13 +30,13 @@
                 <Button x:Name="ImportButton" Content="导入" HorizontalAlignment="Left" Margin="41,10,0,0" VerticalAlignment="Top" Width="75" Click="ImportButton_OnClick"/>
                 <Button x:Name="ExportButton" Content="导出" HorizontalAlignment="Left" Margin="189,10,0,0" VerticalAlignment="Top" Width="75" Click="ExportButton_OnClick"/>
                 <Label Content="Θ旋转" HorizontalAlignment="Left" Margin="34,145,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.988,0.671"/>
-                <TextBox x:Name="ThetaTextBox" HorizontalAlignment="Left" Height="23" Margin="207,145,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="57" TextChanged="ThetaTextBox_TextChanged"/>
+                <TextBox x:Name="ThetaTextBox" HorizontalAlignment="Left" Height="23" Margin="207,145,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="57" />
                 <Slider x:Name="ThetaSlider" HorizontalAlignment="Left" Margin="81,145,0,0" Width="94" Minimum="0" Maximum="10" Value="0" TickFrequency="0.2" IsSnapToTickEnabled ="True" VerticalAlignment="Top" />
                 <Label Content="X缩放" HorizontalAlignment="Left" Margin="34,185,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.988,0.671"/>
-                <TextBox x:Name="XTextBox" HorizontalAlignment="Left" Height="23" Margin="207,189,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="57" TextChanged="XTextBox_TextChanged"/>
+                <TextBox x:Name="XTextBox" HorizontalAlignment="Left" Height="23" Margin="207,189,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="57" />
                 <Slider x:Name="XSlider" HorizontalAlignment="Left" Margin="75,189,0,0" Width="100" Minimum="0.01" Maximum="10" Value="1" VerticalAlignment="Top" />
                 <Label Content="Y缩放" HorizontalAlignment="Left" Margin="34,232,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.988,0.671"/>
-                <TextBox x:Name="YTextBox" HorizontalAlignment="Left" Height="23" Margin="207,235,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="57" TextChanged="YTextBox_TextChanged"/>
+                <TextBox x:Name="YTextBox" HorizontalAlignment="Left" Height="23" Margin="207,235,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="57" />
                 <Slider x:Name="YSlider" HorizontalAlignment="Left" Margin="75,233,0,0" Width="100" Minimum="0.01" Maximum="10" Value="1" VerticalAlignment="Top" />
                 <Label x:Name="ThetaLabel" Content="{Binding Value, ElementName=ThetaSlider}" HorizontalAlignment="Left" Margin="109,128,0,0" VerticalAlignment="Top"/>
                 <Label x:Name="XLabel" Content="{Binding Value, ElementName=XSlider}" HorizontalAlignment="Left" Margin="109,172,0,0" VerticalAlignment="Top"/>
